@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Modern Calculator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(120deg, #a8edea 0%, #fed6e3 100%);
+      font-family: 'Montserrat', Arial, sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #calc-wrap {
+      background: rgba(255,255,255,0.83);
+      max-width: 330px;
+      width: 94vw;
+      margin: 55px auto;
+      border-radius: 18px;
+      box-shadow: 0 8px 40px #96d6f7a0, 0 2px 14px #c9e5fbaf;
+      padding: 38px 23px 27px 23px;
+      position: relative;
+      overflow: hidden;
+      z-index: 2;
+    }
+    #calc-wrap::before {
+      content: '';
+      position: absolute;
+      left: -45px; top: -40px; width: 170px; height: 170px;
+      background: radial-gradient(circle, #a8edea55 0%, #fed6e322 100%);
+      filter: blur(15px);
+      z-index: 0;
+      pointer-events: none;
+    }
+    #display {
+      width: 100%;
+      font-size: 2.05rem;
+      font-family: inherit;
+      text-align: right;
+      margin-bottom: 26px;
+      padding: 13px 11px;
+      background: #f1fafb;
+      color: #434;
+      border: none;
+      border-radius: 11px;
+      box-shadow: 0 2px 12px #c6f2fc23;
+      outline: none;
+      font-weight: bold;
+      letter-spacing: 1.2px;
+      transition: box-shadow 0.19s;
+    }
+    .row {
+      display: flex;
+      margin-bottom: 10px;
+      z-index: 2;
+      position: relative;
+    }
+    button {
+      flex: 1 1 0;
+      padding: 18px 0;
+      font-size: 1.18rem;
+      margin: 2px;
+      background: linear-gradient(90deg, #89f7fe 10%, #66a6ff 100%);
+      border: none;
+      border-radius: 9px;
+      color: #334;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 700;
+      box-shadow: 0 1.5px 7px #bce2fa2b;
+      transition: background 0.18s, box-shadow 0.18s, transform 0.13s;
+    }
+    button:hover, button:focus {
+      background: linear-gradient(100deg, #66a6ff 15%, #89f7fe 85%);
+      box-shadow: 0 5px 24px #aaf2ff56;
+      transform: translateY(-2px) scale(1.045);
+      color: #1d5073;
+      outline: none;
+    }
+    button.op {
+      background: linear-gradient(90deg, #f7971e 10%, #ffd200 100%);
+      color: #915c07;
+    }
+    button.op:hover, button.op:focus {
+      background: linear-gradient(100deg, #ffd200 15%, #f7971e 90%);
+      color: #6e3c00;
+    }
+    button.eq {
+      background: linear-gradient(100deg, #43e97b 15%, #38f9d7 85%);
+      color: #0e6365;
+    }
+    button.eq:hover, button.eq:focus {
+      background: linear-gradient(100deg, #38f9d7 15%, #43e97b 95%);
+      color: #084e41;
+    }
+    @media (max-width:420px){
+      #calc-wrap{padding:11px 3vw 20px;}
+      #display{font-size:1.18rem;}
+      button{padding:14px 0;font-size:1.02rem;}
+    }
+  </style>
+</head>
+<body>
+  <div id="calc-wrap">
+    <input id="display" disabled />
+    <div class="row">
+      <button onclick="press('7')">7</button>
+      <button onclick="press('8')">8</button>
+      <button onclick="press('9')">9</button>
+      <button class="op" onclick="press('/')">÷</button>
+    </div>
+    <div class="row">
+      <button onclick="press('4')">4</button>
+      <button onclick="press('5')">5</button>
+      <button onclick="press('6')">6</button>
+      <button class="op" onclick="press('*')">×</button>
+    </div>
+    <div class="row">
+      <button onclick="press('1')">1</button>
+      <button onclick="press('2')">2</button>
+      <button onclick="press('3')">3</button>
+      <button class="op" onclick="press('-')">−</button>
+    </div>
+    <div class="row">
+      <button onclick="press('0')">0</button>
+      <button onclick="press('.')">.</button>
+      <button onclick="clr()">C</button>
+      <button class="op" onclick="press('+')">+</button>
+    </div>
+    <div class="row">
+      <button class="eq" onclick="calc()">=</button>
+    </div>
+  </div>
+  <script>
+    let expr = '';
+    function press(val) {
+      // Replace user-facing ÷ and × with / and * for display
+      if(val === '/') {
+        expr += '/';
+        document.getElementById('display').value += '÷';
+      }
+      else if(val === '*') {
+        expr += '*';
+        document.getElementById('display').value += '×';
+      }
+      else if(val === '-') {
+        expr += '-';
+        document.getElementById('display').value += '−';
+      }
+      else if(val === '+') {
+        expr += '+';
+        document.getElementById('display').value += '+';
+      }
+      else {
+        expr += val;
+        document.getElementById('display').value += val;
+      }
+    }
+    function clr() {
+      expr = '';
+      document.getElementById('display').value = '';
+    }
+    function calc() {
+      try {
+        let result = eval(expr);
+        document.getElementById('display').value = result;
+        expr = result.toString();
+      } catch {
+        document.getElementById('display').value = 'Error';
+        expr = '';
+      }
+    }
+    // Enable keyboard entry
+    window.addEventListener('keydown', function(e){
+      if((e.key >= '0' && e.key <= '9') || e.key === '.') press(e.key);
+      else if(['+','-','*','/'].includes(e.key)) press(e.key);
+      else if(e.key === 'Enter' || e.key === '=') calc();
+      else if(e.key === 'Backspace') {
+        expr = expr.slice(0, -1);
+        document.getElementById('display').value = document.getElementById('display').value.slice(0, -1);
+      }
+      else if(e.key === 'Escape') clr();
+    });
+  </script>
+</body>
+</html>
